@@ -18,4 +18,9 @@ public final class BodyConverter {
 
         return gson.fromJson(body, classOfT);
     }
+
+    public static String toJson(Object src) {
+        Gson gson = new Gson();
+        return gson.toJson(src);
+    }
 }

@@ -5,17 +5,33 @@ import br.com.marksonarguello.entities.queue.MessageQueue;
 import br.com.marksonarguello.entities.queue.dto.QueueCreateDTO;
 import br.com.marksonarguello.entities.queue.services.QueueService;
 
-public class BrokerService {
+import java.util.List;
 
+public class BrokerService {
+    private static BrokerService brokerService;
     private final Broker broker = Broker.getInstance();
 
     private final QueueService queueService = QueueService.getInstance();
 
+    private BrokerService() {
+    }
+
+    public static BrokerService getInstance() {
+        if (brokerService == null)
+            brokerService = new BrokerService();
+
+        return brokerService;
+    }
+
     public String createQueue(QueueCreateDTO queueCreateDTO) {
         MessageQueue messageQueue = queueService.createQueue(queueCreateDTO);
 
-       broker.createQueue(messageQueue);
+        broker.createQueue(messageQueue);
 
         return broker.toString();
+    }
+
+    public List<String> findAllTopics() {
+        return this.broker.getAllTopics();
     }
 }
