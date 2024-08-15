@@ -4,11 +4,12 @@ import br.com.marksonarguello.entities.baseEntity.BaseEntity;
 
 
 public class Message extends BaseEntity {
-    private final String content;
+    private final String key;
+    private final String value;
 
-    public Message(String content) {
-        this.content = content;
+
+    public Message(String key, String value) {
+        this.key = key;
+        this.value = value;
     }
-
-
 }
