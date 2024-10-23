@@ -2,6 +2,7 @@ package br.com.marksonarguello.entities.queue.services;
 
 import br.com.marksonarguello.consumer.ConsumerRecord;
 import br.com.marksonarguello.entities.consumer.Consumer;
+import br.com.marksonarguello.entities.persistence.FilePersistenceManager;
 import br.com.marksonarguello.entities.queue.MessageQueue;
 import br.com.marksonarguello.entities.queue.dto.QueueCreateDTO;
 import br.com.marksonarguello.entities.queue.dto.QueueMapper;
@@ -11,12 +12,15 @@ import br.com.marksonarguello.util.IdUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class QueueService {
 
     private static QueueService queueService;
     private static final Map<String, MessageQueue> queues = new HashMap<>();
     private static final Map<String, Consumer> consumers = new HashMap<>();
+    private static final FilePersistenceManager filePersistenceManager = new FilePersistenceManager();
 
     private QueueService() {
     }
@@ -28,9 +32,8 @@ public class QueueService {
         return queueService;
     }
 
-    public void addMessageInTopic(String topic, Message message) {
-        MessageQueue queue = queues.get(topic);
-        queue.addMessage(message);
+    public List<MessageQueue> getAllQueues() {
+        return queues.values().stream().toList();
     }
 
     public List<String> getAllTopics() {
@@ -44,6 +47,12 @@ public class QueueService {
             stringBuilder.append(queues.get(key));
         }
         return stringBuilder.toString();
+    }
+
+    public void addMessageInTopic(String topic, Message message) {
+        MessageQueue queue = queues.get(topic);
+        queue.addMessage(message);
+        filePersistenceManager.saveMessage(message, topic);
     }
 
     public MessageQueue createQueue(QueueCreateDTO queueCreateDTO) {
@@ -64,6 +73,7 @@ public class QueueService {
         }
 
         consumers.put(id, consumer);
+        filePersistenceManager.saveConsumer(consumer);
     }
 
     public String register() {
@@ -73,9 +83,7 @@ public class QueueService {
     public ConsumerRecord consumeMessages(String id) {
         Consumer consumer = consumers.get(id);
         if (consumer == null) {
-            Map<String, Consumer> c = new HashMap<>(QueueService.consumers);
-            System.out.println(c);
-            //throw new RuntimeException("Id não existe");
+            throw new RuntimeException("Id não existe");
         }
 
         Map<String, List<Message>> records = new HashMap<>();
@@ -88,8 +96,22 @@ public class QueueService {
                 records.put(topic, messages);
                 consumer.setTopicOffset(topic, queue.size());
             }
+            filePersistenceManager.saveConsumer(consumer);
         }
 
         return new ConsumerRecord(records);
     }
+
+    public void loadQueues() {
+        Map<String, MessageQueue> storedQueues = filePersistenceManager.loadQueues();
+        List<Consumer> storedConsumers = filePersistenceManager.loadConsumers();
+
+        if (queues == null) {
+            return;
+        }
+
+        queues.putAll(storedQueues);
+        consumers.putAll(storedConsumers.stream().collect(Collectors.toMap(Consumer::getId, Function.identity())));
+    }
+
 }

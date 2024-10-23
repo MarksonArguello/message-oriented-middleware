@@ -1,11 +1,12 @@
 package br.com.marksonarguello.entities.consumer;
 
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Consumer {
+public class Consumer implements Serializable {
     private final Map<String, Integer> topicsOffset = new HashMap<>();
     private final String id;
 
@@ -27,5 +28,9 @@ public class Consumer {
 
     public void setTopicOffset(String topic, int size) {
         topicsOffset.put(topic, size);
+    }
+
+    public String getId() {
+        return id;
     }
 }

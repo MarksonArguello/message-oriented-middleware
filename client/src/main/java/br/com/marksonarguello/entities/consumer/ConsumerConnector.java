@@ -6,6 +6,7 @@ import br.com.marksonarguello.consumer.ConsumerRecord;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 
 public class ConsumerConnector {
@@ -15,11 +16,19 @@ public class ConsumerConnector {
     private String host;
     private String port;
 
-    public ConsumerConnector(String consumerId, String host, String port) {
-        this.consumerId = consumerId;
+    public ConsumerConnector(String host, String port) {
         this.host = host;
         this.port = port;
     }
+
+    public String register() throws URISyntaxException, IOException {
+        String url = getMiddlewareUrl() + "/register";
+        URI uri = new URI(getMiddlewareUrl());
+
+        this.consumerId = httpClient.request(uri,null,  String.class);
+        return this.consumerId;
+    }
+
 
     protected ConsumerRecord requestForMessages() throws URISyntaxException, IOException {
         String url = getMiddlewareUrl() + "/poll";
@@ -32,8 +41,20 @@ public class ConsumerConnector {
         return httpClient.request(uri, parameters, ConsumerRecord.class);
     }
 
+
     private String getMiddlewareUrl() {
         return host + ":" + port;
     }
 
+    public String subscribe(List<String> topics) throws IOException {
+        String url = getMiddlewareUrl() + "/subscribe";
+        URI uri = null;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        return httpClient.request(uri, null,topics);
+    }
 }

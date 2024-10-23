@@ -4,7 +4,12 @@ import br.com.marksonarguello.util.IdUtil;
 
 import java.util.Objects;
 public abstract class BaseEntity {
-    private final String id = IdUtil.newId();
+    private String id;
+
+    public BaseEntity() {
+        if (this.id == null)
+            this.id = IdUtil.newId();
+    }
 
     public String getId() {
         return id;

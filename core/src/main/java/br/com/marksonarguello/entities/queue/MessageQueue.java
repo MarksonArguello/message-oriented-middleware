@@ -25,6 +25,9 @@ public class MessageQueue extends BaseEntity {
         queue.add(message);
     }
 
+    public List<Message> getMessages() {
+        return new ArrayList<>(this.queue);
+    }
     public List<Message> getMessages(int offset) {
         if (offset >= queue.size())
             return null;
@@ -43,6 +46,10 @@ public class MessageQueue extends BaseEntity {
         consumer.subscribe(topic);
     }
 
+    public void subscribe(List<Consumer> consumers) {
+        consumers.forEach(this::subscribe);
+    }
+
     public void unsubscribe(Consumer consumer) {
         consumers.remove(consumer);
     }
@@ -55,6 +62,10 @@ public class MessageQueue extends BaseEntity {
         return queue.size();
     }
 
+    public List<Consumer> getConsumers() {
+        return new ArrayList<>(consumers);
+    }
+
     @Override
     public String toString() {
 
@@ -63,5 +74,9 @@ public class MessageQueue extends BaseEntity {
                 "messagesSize: " + queue.size() + "\n" +
                 "consumers: " + consumers.size() + "\n" +
                 "}\n";
+    }
+
+    public void addMessages(List<Message> messages) {
+        queue.addAll(messages);
     }
 }

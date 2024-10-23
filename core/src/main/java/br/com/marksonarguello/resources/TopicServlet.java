@@ -17,7 +17,7 @@ public class TopicServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String body = BodyConverter.toJson(queueService.getAllTopics());
+        String body = BodyConverter.toJson(queueService.getAllQueues());
 
         response.setContentType(MediaType.APPLICATION_JSON);
         response.getWriter().write(body);
