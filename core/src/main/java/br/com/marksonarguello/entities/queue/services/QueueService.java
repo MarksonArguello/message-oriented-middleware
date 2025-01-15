@@ -2,6 +2,7 @@ package br.com.marksonarguello.entities.queue.services;
 
 import br.com.marksonarguello.consumer.ConsumerRecord;
 import br.com.marksonarguello.entities.consumer.Consumer;
+import br.com.marksonarguello.entities.network.dto.ConsumerConnectionDTO;
 import br.com.marksonarguello.entities.persistence.FilePersistenceManager;
 import br.com.marksonarguello.entities.queue.MessageQueue;
 import br.com.marksonarguello.entities.queue.dto.QueueCreateDTO;
@@ -32,27 +33,33 @@ public class QueueService {
         return queueService;
     }
 
-    public List<MessageQueue> getAllQueues() {
-        return queues.values().stream().toList();
-    }
-
-    public List<String> getAllTopics() {
-        return queues.values().stream().map(MessageQueue::getTopic).toList();
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String key : queues.keySet()) {
-            stringBuilder.append(queues.get(key));
-        }
-        return stringBuilder.toString();
-    }
-
     public void addMessageInTopic(String topic, Message message) {
         MessageQueue queue = queues.get(topic);
         queue.addMessage(message);
         filePersistenceManager.saveMessage(message, topic);
+        sendMessagesToSubscribers(queue);
+    }
+
+    private void sendMessagesToSubscribers(MessageQueue queue) {
+        for (Consumer consumer : queue.getConsumers()) {
+            if (!consumer.hasConnection()) {
+                System.out.printf("Consumer %s não possui conexão%n", consumer.getId());
+                continue;
+            }
+
+            Map<String, List<Message>> records = new HashMap<>();
+            List<Message> messages = queue.getMessages(consumer.getTopicOffset(queue.getTopic()));
+
+            records.put(queue.getTopic(), messages);
+            if (consumer.hasConnection()) {
+                boolean receivedMessages = consumer.sendMessages(new ConsumerRecord(records));
+                if (receivedMessages) {
+                    consumer.setTopicOffset(queue.getTopic(), queue.size());
+                }
+
+                filePersistenceManager.saveConsumer(consumer);
+            }
+        }
     }
 
     public MessageQueue createQueue(QueueCreateDTO queueCreateDTO) {
@@ -76,8 +83,19 @@ public class QueueService {
         filePersistenceManager.saveConsumer(consumer);
     }
 
-    public String register() {
-        return IdUtil.newId();
+    public String register(ConsumerConnectionDTO consumerConnectionDTO) {
+        Consumer consumer = new Consumer(IdUtil.newId());
+        consumers.put(consumer.getId(), consumer);
+
+        if (consumerConnectionDTO != null) {
+            try {
+                consumer.setConsumerConnectionSocket(consumerConnectionDTO.ip(), consumerConnectionDTO.port());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return consumer.getId();
     }
 
     public ConsumerRecord consumeMessages(String id) {
@@ -106,12 +124,26 @@ public class QueueService {
         Map<String, MessageQueue> storedQueues = filePersistenceManager.loadQueues();
         List<Consumer> storedConsumers = filePersistenceManager.loadConsumers();
 
-        if (queues == null) {
-            return;
+        if (storedQueues != null) {
+            queues.putAll(storedQueues);
         }
 
-        queues.putAll(storedQueues);
-        consumers.putAll(storedConsumers.stream().collect(Collectors.toMap(Consumer::getId, Function.identity())));
+        if (storedConsumers != null) {
+            consumers.putAll(storedConsumers.stream().collect(Collectors.toMap(Consumer::getId, Function.identity())));
+        }
+    }
+
+    public List<MessageQueue> getAllQueues() {
+        return queues.values().stream().toList();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String key : queues.keySet()) {
+            stringBuilder.append(queues.get(key));
+        }
+        return stringBuilder.toString();
     }
 
 }

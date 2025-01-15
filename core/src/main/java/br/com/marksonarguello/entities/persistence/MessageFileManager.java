@@ -19,6 +19,11 @@ public class MessageFileManager {
     private FileReader fileReader = new FileReader();
     private Map<String, Integer> messageFileNumber = new HashMap<>();
 
+    public MessageFileManager() {
+        File file = new File(queueMessagesPath);
+        file.mkdir();
+    }
+
     public void saveQueueMessages(MessageQueue messageQueue) {
         List<Message> messages = messageQueue.getMessages();
 
@@ -44,10 +49,12 @@ public class MessageFileManager {
     }
 
     public void saveMessage(Message message, String topic) {
-        List<Message> messages = (List<Message>) fileReader.readObject(getLastFileName(topic));
-        if (messages == null) {
-            messages = new ArrayList<>();
-            messageFileNumber.put(topic, 0);
+        File file = new File(getLastFileName(topic));
+
+        List<Message> messages = new ArrayList<>();
+        messageFileNumber.putIfAbsent(topic, 0);
+        if (file.exists()) {
+            messages = (List<Message>) fileReader.readObject(getLastFileName(topic));
         }
 
         int currentSize = messages.stream().mapToInt(Message::getSizeInBytes).sum();

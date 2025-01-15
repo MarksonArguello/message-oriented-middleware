@@ -1,6 +1,10 @@
 package br.com.marksonarguello.entities.consumer;
 
 
+import br.com.marksonarguello.consumer.ConsumerRecord;
+import br.com.marksonarguello.entities.network.ConsumerConnectionSocket;
+import java.io.IOException;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +13,8 @@ import java.util.Map;
 public class Consumer implements Serializable {
     private final Map<String, Integer> topicsOffset = new HashMap<>();
     private final String id;
+
+    private transient ConsumerConnectionSocket consumerConnectionSocket;
 
     public Consumer(String id) {
         this.id = id;
@@ -30,7 +36,27 @@ public class Consumer implements Serializable {
         topicsOffset.put(topic, size);
     }
 
+    public void setConsumerConnectionSocket(String ip, int port) throws IOException {
+        consumerConnectionSocket = new ConsumerConnectionSocket();
+        consumerConnectionSocket.startConnection(ip, port);
+    }
+
     public String getId() {
         return id;
+    }
+
+    public boolean sendMessages(ConsumerRecord records) {
+        try {
+            consumerConnectionSocket.sendMessages(records);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean hasConnection() {
+        return consumerConnectionSocket != null;
     }
 }

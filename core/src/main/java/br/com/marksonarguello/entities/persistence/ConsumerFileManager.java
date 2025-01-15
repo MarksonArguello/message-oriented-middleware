@@ -1,12 +1,10 @@
 package br.com.marksonarguello.entities.persistence;
 
 import br.com.marksonarguello.entities.consumer.Consumer;
-import br.com.marksonarguello.entities.queue.MessageQueue;
-import br.com.marksonarguello.message.Message;
+
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +35,10 @@ public class ConsumerFileManager {
         if (consumerFileNumber.get(consumer.getId()) == null) {
             consumerFileNumber.put(consumer.getId(), lastConsumerFileNumber);
             String filePath = getFileName(consumer);
-            File file = new File(queueConsumersPath);
-            List<Consumer> consumers = (List<Consumer>) fileReader.readObject(filePath);
-            if (consumers == null) {
-                consumers = new ArrayList<>();
+            File file = new File(filePath);
+            List<Consumer> consumers = new ArrayList<>();
+            if (file.exists()) {
+                consumers = (List<Consumer>) fileReader.readObject(file.getAbsolutePath());
             }
             consumers.add(consumer);
             fileWriter.writeObject(filePath, consumers);

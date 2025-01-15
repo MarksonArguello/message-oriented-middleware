@@ -56,6 +56,10 @@ public class FilePersistenceManager {
 
         List<Consumer> consumers = consumerFileManager.loadConsumers();
 
+        if (consumers == null || messageQueues == null || messageQueues.isEmpty()) {
+            return messageQueues;
+        }
+
         for (Consumer consumer : consumers) {
             for (String topic : consumer.getInterestedTopics()) {
                 messageQueues.get(topic).subscribe(consumer);

@@ -1,7 +1,9 @@
 package br.com.marksonarguello.entities.consumer;
 
+import br.com.marksonarguello.connect.ConnectionDTO;
 import br.com.marksonarguello.connect.HttpClient;
 import br.com.marksonarguello.consumer.ConsumerRecord;
+import jakarta.ws.rs.HttpMethod;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,17 +17,16 @@ public class ConsumerConnector {
     private String consumerId;
     private String host;
     private String port;
-
     public ConsumerConnector(String host, String port) {
         this.host = host;
         this.port = port;
     }
 
-    public String register() throws URISyntaxException, IOException {
+    public String register(ConnectionDTO connectionDTO) throws URISyntaxException, IOException {
         String url = getMiddlewareUrl() + "/register";
-        URI uri = new URI(getMiddlewareUrl());
+        URI uri = new URI(url);
 
-        this.consumerId = httpClient.request(uri,null,  String.class);
+        this.consumerId = httpClient.request(uri,null,  String.class, HttpMethod.POST, connectionDTO);
         return this.consumerId;
     }
 
@@ -43,11 +44,11 @@ public class ConsumerConnector {
 
 
     private String getMiddlewareUrl() {
-        return host + ":" + port;
+        return "http://" + host + ":" + port + "/mom";
     }
 
     public String subscribe(List<String> topics) throws IOException {
-        String url = getMiddlewareUrl() + "/subscribe";
+        String url = getMiddlewareUrl() + "/subscribe" + "?id=" + consumerId;
         URI uri = null;
         try {
             uri = new URI(url);
@@ -55,6 +56,6 @@ public class ConsumerConnector {
             e.printStackTrace();
         }
 
-        return httpClient.request(uri, null,topics);
+        return httpClient.request(uri, null, topics);
     }
 }

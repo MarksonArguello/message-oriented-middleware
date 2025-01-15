@@ -1,6 +1,8 @@
 package br.com.marksonarguello.resources;
 
+import br.com.marksonarguello.entities.network.dto.ConsumerConnectionDTO;
 import br.com.marksonarguello.entities.queue.services.QueueService;
+import br.com.marksonarguello.util.BodyConverter;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +19,9 @@ public class RegisterConsumerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String id = queueService.register();
+        ConsumerConnectionDTO consumerConnectionDTO =  BodyConverter.fromJson(request.getReader(), ConsumerConnectionDTO.class);
+
+        String id = queueService.register(consumerConnectionDTO);
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(MediaType.APPLICATION_JSON);
