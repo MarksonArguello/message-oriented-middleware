@@ -19,6 +19,8 @@ public class QueueServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
+        System.out.println("Receiving request to create queue");
+
         QueueCreateDTO queueCreateDTO = BodyConverter.fromJson(request.getReader(), QueueCreateDTO.class);
 
         MessageQueue responseBody = queueService.createQueue(queueCreateDTO);

@@ -19,6 +19,8 @@ public class SendMessageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String topic = request.getParameter(Message.TOPIC);
+        System.out.println("Sending message to topic: " + topic);
+
         Message message = BodyConverter.fromJson(request.getReader(), Message.class);
         queueService.addMessageInTopic(topic, message);
     }

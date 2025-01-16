@@ -11,6 +11,7 @@ public class InitializationContextServlet implements ServletContextListener {
 
     private final QueueService queueService = QueueService.getInstance();
     public void contextInitialized(ServletContextEvent e) {
+        System.out.println("Initializing queues");
         queueService.loadQueues();
     }
 

@@ -19,6 +19,8 @@ public class TopicServlet extends HttpServlet {
             throws IOException {
         String body = BodyConverter.toJson(queueService.getAllQueues());
 
+        System.out.println("Getting all topics");
+
         response.setContentType(MediaType.APPLICATION_JSON);
         response.getWriter().write(body);
     }

@@ -18,6 +18,7 @@ public class SubscribeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String id = request.getParameter("id");
+        System.out.println("Subscribing");
 
         List topics = BodyConverter.fromJson(
                 request.getReader(),

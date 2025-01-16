@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 public class QueueService {
 
     private static QueueService queueService;
-    private static final Map<String, MessageQueue> queues = new HashMap<>();
-    private static final Map<String, Consumer> consumers = new HashMap<>();
-    private static final FilePersistenceManager filePersistenceManager = new FilePersistenceManager();
+    private final Map<String, MessageQueue> queues = new HashMap<>();
+    private final Map<String, Consumer> consumers = new HashMap<>();
+    private final FilePersistenceManager filePersistenceManager = new FilePersistenceManager();
 
     private QueueService() {
     }
@@ -34,6 +34,7 @@ public class QueueService {
     }
 
     public void addMessageInTopic(String topic, Message message) {
+        System.out.println("Adding message to topic: " + topic);
         MessageQueue queue = queues.get(topic);
         queue.addMessage(message);
         filePersistenceManager.saveMessage(message, topic);
@@ -41,6 +42,7 @@ public class QueueService {
     }
 
     private void sendMessagesToSubscribers(MessageQueue queue) {
+        System.out.println("Sending messages to subscribers");
         for (Consumer consumer : queue.getConsumers()) {
             if (!consumer.hasConnection()) {
                 System.out.printf("Consumer %s não possui conexão%n", consumer.getId());
@@ -63,12 +65,14 @@ public class QueueService {
     }
 
     public MessageQueue createQueue(QueueCreateDTO queueCreateDTO) {
+        System.out.println("Creating queue with name: " + queueCreateDTO.topic());
         MessageQueue queue = QueueMapper.toEntity(queueCreateDTO);
         queues.put(queue.getTopic(), queue);
         return queue;
     }
 
     public void subscribe(String id, List<String> topics) {
+        System.out.println("Subscribing consumer with id: " + id + " to topics");
         Consumer consumer = new Consumer(id);
         if (consumers.containsKey(id)) {
             consumer = consumers.get(id);
@@ -76,6 +80,10 @@ public class QueueService {
 
         for (String topic : topics) {
             MessageQueue queue = queues.get(topic);
+            if (queue == null) {
+                System.out.println("Queue não existe: " + topic);
+                throw new RuntimeException("Queue não existe");
+            }
             queue.subscribe(consumer);
         }
 
@@ -84,6 +92,7 @@ public class QueueService {
     }
 
     public String register(ConsumerConnectionDTO consumerConnectionDTO) {
+        System.out.println("Registering consumer");
         Consumer consumer = new Consumer(IdUtil.newId());
         consumers.put(consumer.getId(), consumer);
 
@@ -99,6 +108,7 @@ public class QueueService {
     }
 
     public ConsumerRecord consumeMessages(String id) {
+        System.out.println("Consuming messages for consumer with id: " + id);
         Consumer consumer = consumers.get(id);
         if (consumer == null) {
             throw new RuntimeException("Id não existe");
@@ -121,6 +131,7 @@ public class QueueService {
     }
 
     public void loadQueues() {
+        System.out.println("Loading queues");
         Map<String, MessageQueue> storedQueues = filePersistenceManager.loadQueues();
         List<Consumer> storedConsumers = filePersistenceManager.loadConsumers();
 
