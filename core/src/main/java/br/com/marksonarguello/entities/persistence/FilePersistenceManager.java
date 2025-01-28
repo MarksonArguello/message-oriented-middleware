@@ -12,7 +12,7 @@ import java.util.Map;
 public class FilePersistenceManager {
     public static final String baseFolderPath = "data/";
     public static final String SEPARATOR = "_";
-    private static final Boolean persistToFile = true;
+    private static final Boolean persistToFile = Boolean.valueOf(System.getProperty("persistence.enable"));
     private ConsumerFileManager consumerFileManager;
     private MessageFileManager messageFileManager;
 
@@ -54,9 +54,13 @@ public class FilePersistenceManager {
         }
         Map<String, MessageQueue> messageQueues = messageFileManager.loadMessageQueues();
 
+        if (messageQueues.isEmpty()) {
+            System.out.println("No message queues found");
+        }
+
         List<Consumer> consumers = consumerFileManager.loadConsumers();
 
-        if (consumers == null || messageQueues == null || messageQueues.isEmpty()) {
+        if (consumers == null || messageQueues.isEmpty()) {
             return messageQueues;
         }
 

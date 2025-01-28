@@ -24,8 +24,14 @@ public class SubscribeServlet extends HttpServlet {
                 request.getReader(),
                 List.class
         );
+        try {
+            queueService.subscribe(id, topics);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(e.getMessage());
+            return;
+        }
 
-       queueService.subscribe(id, topics);
 
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }

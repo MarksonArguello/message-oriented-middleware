@@ -8,14 +8,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Consumer  {
     private String id;
@@ -23,10 +20,7 @@ public class Consumer  {
     private Set<String> topics = new HashSet<>();
 
     private Map<String, List<Message>> messages = new HashMap<>();
-    private Thread thread  = Thread.currentThread();
     private ConnectionSocket connectionSocket;
-
-    private Lock lock = new ReentrantLock();
 
     public Consumer(String host, String port)  {
         this.connector = new ConsumerConnector(host, port);
@@ -40,6 +34,7 @@ public class Consumer  {
             this.connectionSocket = new ConnectionSocket(this);
             this.connectionSocket.start();
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException("Erro ao iniciar conexão de socket para consumidor");
         }
 
@@ -50,7 +45,7 @@ public class Consumer  {
             InetAddress localHost = InetAddress.getLocalHost();
             var consumerConnectionDTO = new ConnectionDTO(
                     localHost.getHostAddress(),
-                    ConnectionSocket.PORT
+                    connectionSocket.getPort()
             );
             return connector.register(consumerConnectionDTO);
         } catch (URISyntaxException e) {
@@ -76,37 +71,24 @@ public class Consumer  {
     }
 
     protected void addConsumerRecordInMessages(ConsumerRecord record) {
-        lock.lock();
         for (String topic : record.records().keySet()) {
             List<Message> messages = record.records().get(topic);
             this.messages.get(topic).addAll(messages);
-            synchronized (this) {
-                this.notify();
-            }
         }
-        lock.unlock();
     }
 
-    public synchronized Message consumeMessage() throws InterruptedException {
-        lock.lock();
+    public Message consumeMessage() throws InterruptedException {
         while (true) {
             for (String topic : this.topics) {
                 if (!this.messages.get(topic).isEmpty()) {
-                    Message message = this.messages.get(topic).remove(0);
-                    lock.unlock();
-                    return message;
+                    return this.messages.get(topic).remove(0);
                 }
             }
-            synchronized (this) {
-                lock.unlock();
-                System.out.println("Waiting for messages...");
-                this.wait();
-                lock.lock();
-            }
+
         }
     }
 
-    public void subscribe(Collection<String> topics) {
+    public void subscribe(Set<String> topics) {
         try {
             topics.removeAll(this.topics);
             connector.subscribe(topics.stream().toList());

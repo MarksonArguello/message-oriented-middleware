@@ -10,6 +10,7 @@ import br.com.marksonarguello.entities.queue.dto.QueueMapper;
 import br.com.marksonarguello.message.Message;
 import br.com.marksonarguello.util.IdUtil;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,14 +53,20 @@ public class QueueService {
             Map<String, List<Message>> records = new HashMap<>();
             List<Message> messages = queue.getMessages(consumer.getTopicOffset(queue.getTopic()));
 
-            records.put(queue.getTopic(), messages);
-            if (consumer.hasConnection()) {
-                boolean receivedMessages = consumer.sendMessages(new ConsumerRecord(records));
-                if (receivedMessages) {
-                    consumer.setTopicOffset(queue.getTopic(), queue.size());
-                }
+            try {
+                records.put(queue.getTopic(), messages);
+                if (consumer.hasConnection()) {
+                    boolean receivedMessages = consumer.sendMessages(new ConsumerRecord(records));
+                    if (receivedMessages) {
+                        consumer.setTopicOffset(queue.getTopic(), queue.size());
+                    }
 
-                filePersistenceManager.saveConsumer(consumer);
+                    filePersistenceManager.saveConsumer(consumer);
+                }
+            } catch (IOException e) {
+                System.out.println("Error sending messages to consumer due to: " + e.getMessage());
+                System.out.println("Removing consumer: " + consumer.getId());
+                queue.unsubscribe(consumer);
             }
         }
     }

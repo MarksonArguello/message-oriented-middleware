@@ -1,5 +1,6 @@
 package br.com.marksonarguello.resources;
 
+import br.com.marksonarguello.entities.configuration.ConfigurationService;
 import br.com.marksonarguello.entities.queue.services.QueueService;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -12,6 +13,7 @@ public class InitializationContextServlet implements ServletContextListener {
     private final QueueService queueService = QueueService.getInstance();
     public void contextInitialized(ServletContextEvent e) {
         System.out.println("Initializing queues");
+        ConfigurationService.loadProperties();
         queueService.loadQueues();
     }
 

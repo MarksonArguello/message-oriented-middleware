@@ -39,21 +39,16 @@ public class Consumer implements Serializable {
     public void setConsumerConnectionSocket(String ip, int port) throws IOException {
         consumerConnectionSocket = new ConsumerConnectionSocket();
         consumerConnectionSocket.startConnection(ip, port);
+        System.out.println("Consumer " + id + " connected to " + ip + ":" + port);
     }
 
     public String getId() {
         return id;
     }
 
-    public boolean sendMessages(ConsumerRecord records) {
-        try {
-            consumerConnectionSocket.sendMessages(records);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+    public boolean sendMessages(ConsumerRecord records) throws IOException {
+        consumerConnectionSocket.sendMessages(records);
+        return true;
     }
 
     public boolean hasConnection() {

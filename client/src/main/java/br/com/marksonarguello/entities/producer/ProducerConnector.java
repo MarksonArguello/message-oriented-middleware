@@ -1,4 +1,4 @@
-package br.com.marksonarguello.entites.producer;
+package br.com.marksonarguello.entities.producer;
 
 import br.com.marksonarguello.connect.ConnectionDTO;
 import br.com.marksonarguello.connect.HttpClient;

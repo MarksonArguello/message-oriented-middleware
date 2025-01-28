@@ -89,6 +89,10 @@ public class MessageFileManager {
             messageQueues.get(topic).addMessages(messages);
         }
 
+        for (String topic : messageQueues.keySet()) {
+            System.out.println("Loaded " + messageQueues.get(topic).size() + " messages for topic '" + topic + "'");
+        }
+
         return messageQueues;
     }
 

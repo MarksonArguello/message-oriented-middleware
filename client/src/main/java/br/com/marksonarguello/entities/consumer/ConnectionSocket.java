@@ -8,11 +8,14 @@ import java.net.Socket;
 import java.net.ServerSocket;
 
 public class ConnectionSocket extends Thread {
-    public static final int PORT = 10004;
+    private static int PORT = 10004;
+    private int port;
     private ServerSocket serverSocket;
     private Consumer consumer;
     public ConnectionSocket(Consumer consumer) throws IOException {
-        this.serverSocket = new ServerSocket(PORT);
+        this.port = PORT;
+        PORT++;
+        this.serverSocket = new ServerSocket(this.port);
         this.consumer = consumer;
     }
 
@@ -35,4 +38,7 @@ public class ConnectionSocket extends Thread {
 
     }
 
+    public int getPort() {
+        return port;
+    }
 }
