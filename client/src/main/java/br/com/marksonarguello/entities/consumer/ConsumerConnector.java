@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
 
 public class ConsumerConnector {
 
@@ -30,16 +29,21 @@ public class ConsumerConnector {
         return this.consumerId;
     }
 
+    public String register() throws URISyntaxException, IOException {
+        String url = getMiddlewareUrl() + "/register";
+        URI uri = new URI(url);
+
+        this.consumerId = httpClient.request(uri,null,  String.class, HttpMethod.POST, null);
+        return this.consumerId;
+    }
+
+
 
     protected ConsumerRecord requestForMessages() throws URISyntaxException, IOException {
-        String url = getMiddlewareUrl() + "/poll";
-        URI uri = new URI(getMiddlewareUrl());
+        String url = getMiddlewareUrl() + "/consume?id=" + this.consumerId;
+        URI uri = new URI(url);
 
-        Map<String, String> parameters = Map.of(
-                "consumerId", consumerId
-        );
-
-        return httpClient.request(uri, parameters, ConsumerRecord.class);
+        return httpClient.request(uri, null, ConsumerRecord.class);
     }
 
 

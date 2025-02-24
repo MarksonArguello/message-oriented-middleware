@@ -32,7 +32,7 @@ public class Consumer implements Serializable {
         topicsOffset.put(topic, 0);
     }
 
-    public void setTopicOffset(String topic, int size) {
+    public synchronized void setTopicOffset(String topic, int size) {
         topicsOffset.put(topic, size);
     }
 

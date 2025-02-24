@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TestConsumer extends Thread {
-    private Consumer consumer = new Consumer("localhost", "8080");
+    private Consumer consumer = new Consumer("localhost", "8080", false);
     private int key;
 
     public TestConsumer(int key) {

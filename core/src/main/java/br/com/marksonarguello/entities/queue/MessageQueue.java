@@ -16,19 +16,22 @@ public class MessageQueue extends BaseEntity {
     private final List<Message> queue = new LinkedList<>();
     private final Set<Consumer> consumers = new HashSet<>();
     private final ConsumptionMode consumptionMode = ConsumptionMode.PULL;
+    private Iterator<Consumer> consumerIterator = consumers.iterator();
 
     public MessageQueue(String topic) {
         this.topic = topic;
     }
 
-    public void addMessage(Message message) {
+    public synchronized void addMessage(Message message) {
         queue.add(message);
+        //System.out.println(queue.size());
     }
 
-    public List<Message> getMessages() {
+    public synchronized List<Message> getMessages() {
         return new ArrayList<>(this.queue);
     }
-    public List<Message> getMessages(int offset) {
+    public synchronized List<Message> getMessages(int offset) {
+        System.out.println(offset);
         if (offset >= queue.size())
             return null;
 
@@ -44,6 +47,31 @@ public class MessageQueue extends BaseEntity {
     public void subscribe(Consumer consumer) {
         consumers.add(consumer);
         consumer.subscribe(topic);
+    }
+
+    public Message popMessage() {
+        if (queue.isEmpty()) {
+            return null;
+        }
+        return queue.remove(0);
+    }
+
+    public List<Message> popAllMessages() {
+        List<Message> messages = new ArrayList<>(queue);
+        queue.clear();
+        return messages;
+    }
+
+    public Consumer nextConsumer() {
+        if (!consumerIterator.hasNext()) {
+            if (this.consumers.isEmpty()) {
+                return null;
+            }
+
+            consumerIterator = consumers.iterator();
+        }
+
+        return consumerIterator.next();
     }
 
     public void subscribe(List<Consumer> consumers) {
@@ -76,7 +104,8 @@ public class MessageQueue extends BaseEntity {
                 "}\n";
     }
 
-    public void addMessages(List<Message> messages) {
+    public synchronized void addMessages(List<Message> messages) {
         queue.addAll(messages);
+        System.out.println(queue.size());
     }
 }

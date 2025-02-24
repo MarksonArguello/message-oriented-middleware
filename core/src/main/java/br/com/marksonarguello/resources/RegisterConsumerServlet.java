@@ -20,9 +20,11 @@ public class RegisterConsumerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         ConsumerConnectionDTO consumerConnectionDTO =  BodyConverter.fromJson(request.getReader(), ConsumerConnectionDTO.class);
+        if (consumerConnectionDTO != null) {
+            System.out.println("Registering ip: " + consumerConnectionDTO.ip() + " port: " + consumerConnectionDTO.port());
 
-        System.out.println("Registering ip: " + consumerConnectionDTO.ip() + " port: " + consumerConnectionDTO.port());
-        String id = queueService.register(consumerConnectionDTO);
+        }
+       String id = queueService.register(consumerConnectionDTO);
         System.out.println("Registered with id: " + id);
 
         response.setStatus(HttpServletResponse.SC_OK);

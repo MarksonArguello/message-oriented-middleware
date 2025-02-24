@@ -21,10 +21,15 @@ public class Consumer  {
 
     private Map<String, List<Message>> messages = new HashMap<>();
     private ConnectionSocket connectionSocket;
+    private boolean push = false;
 
-    public Consumer(String host, String port)  {
+    public Consumer(String host, String port, Boolean push)  {
         this.connector = new ConsumerConnector(host, port);
-        initSocketConnection();
+        this.push = push;
+        if (push != null && push) {
+            initSocketConnection();
+        }
+
         this.id = this.register();
 
     }
@@ -41,6 +46,14 @@ public class Consumer  {
     }
 
     private String register() {
+        if (push) {
+            return registerPushMode();
+        }
+
+        return registerPullMode();
+    }
+
+    private String registerPushMode() {
         try {
             InetAddress localHost = InetAddress.getLocalHost();
             var consumerConnectionDTO = new ConnectionDTO(
@@ -53,6 +66,16 @@ public class Consumer  {
             throw new RuntimeException("Erro ao gerar URL de registro de consumidor (%s) para middleware.".formatted(this.getConsumerId()));
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("Erro ao ler resposta do middleware no registro de consumidor (%s).".formatted(this.getConsumerId()));
+        }
+    }
+
+    private String registerPullMode() {
+        try {
+            return connector.register();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Erro ao gerar URL de registro de consumidor (%s) para middleware.".formatted(this.getConsumerId()));
+        } catch (IOException e) {
             throw new RuntimeException("Erro ao ler resposta do middleware no registro de consumidor (%s).".formatted(this.getConsumerId()));
         }
     }

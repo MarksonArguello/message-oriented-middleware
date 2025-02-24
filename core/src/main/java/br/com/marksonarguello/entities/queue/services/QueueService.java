@@ -4,7 +4,9 @@ import br.com.marksonarguello.consumer.ConsumerRecord;
 import br.com.marksonarguello.entities.consumer.Consumer;
 import br.com.marksonarguello.entities.network.dto.ConsumerConnectionDTO;
 import br.com.marksonarguello.entities.persistence.FilePersistenceManager;
+import br.com.marksonarguello.entities.queue.ConsumptionMode;
 import br.com.marksonarguello.entities.queue.MessageQueue;
+import br.com.marksonarguello.entities.queue.QueueType;
 import br.com.marksonarguello.entities.queue.dto.QueueCreateDTO;
 import br.com.marksonarguello.entities.queue.dto.QueueMapper;
 import br.com.marksonarguello.message.Message;
@@ -23,6 +25,8 @@ public class QueueService {
     private final Map<String, MessageQueue> queues = new HashMap<>();
     private final Map<String, Consumer> consumers = new HashMap<>();
     private final FilePersistenceManager filePersistenceManager = new FilePersistenceManager();
+    private final ConsumptionMode deliveryMode = ConsumptionMode.fromString(System.getenv("QUEUE_MODE"));
+    private final QueueType queueType = QueueType.fromString(System.getenv("QUEUE_TYPE"));
 
     private QueueService() {
     }
@@ -30,20 +34,32 @@ public class QueueService {
     public static QueueService getInstance() {
         if (queueService == null) {
             queueService = new QueueService();
+            System.out.println("Creating new QueueService instance");
+            System.out.println("Delivery mode: " + queueService.deliveryMode);
+            System.out.println("Queue type: " + queueService.queueType);
         }
         return queueService;
     }
 
     public void addMessageInTopic(String topic, Message message) {
-        System.out.println("Adding message to topic: " + topic);
+        //System.out.println("Adding message to topic: " + topic);
         MessageQueue queue = queues.get(topic);
         queue.addMessage(message);
         filePersistenceManager.saveMessage(message, topic);
-        sendMessagesToSubscribers(queue);
+        if (deliveryMode == ConsumptionMode.PUSH) {
+            sendMessagesToSubscribers(queue);
+        }
     }
 
     private void sendMessagesToSubscribers(MessageQueue queue) {
         System.out.println("Sending messages to subscribers");
+        if (queueType.equals(QueueType.PUB_SUB))
+            sendMessagesPubSub(queue);
+        else
+            sendMessagesP2P(queue);
+    }
+
+    private void sendMessagesPubSub(MessageQueue queue) {
         for (Consumer consumer : queue.getConsumers()) {
             if (!consumer.hasConnection()) {
                 System.out.printf("Consumer %s não possui conexão%n", consumer.getId());
@@ -68,6 +84,39 @@ public class QueueService {
                 System.out.println("Removing consumer: " + consumer.getId());
                 queue.unsubscribe(consumer);
             }
+        }
+    }
+
+    private void sendMessagesP2P(MessageQueue queue) {
+        if (queue.getConsumers().isEmpty())
+            return;
+
+        Message message = queue.popMessage();
+
+        while (message != null) {
+
+            Consumer consumer = queue.nextConsumer();
+
+            if (!consumer.hasConnection()) {
+                System.out.printf("Consumer %s não possui conexão%n", consumer.getId());
+                continue;
+            }
+
+            Map<String, List<Message>> records = new HashMap<>();
+            records.put(queue.getTopic(), List.of(message));
+            try {
+                boolean receivedMessages = consumer.sendMessages(new ConsumerRecord(records));
+                if (receivedMessages) {
+                    System.out.println("Message sent to consumer: " + consumer.getId());
+                    message = queue.popMessage();
+                }
+
+            } catch (IOException e) {
+                System.out.println("Error sending messages to consumer due to: " + e.getMessage());
+                System.out.println("Removing consumer: " + consumer.getId());
+                queue.unsubscribe(consumer);
+            }
+
         }
     }
 
@@ -103,7 +152,7 @@ public class QueueService {
         Consumer consumer = new Consumer(IdUtil.newId());
         consumers.put(consumer.getId(), consumer);
 
-        if (consumerConnectionDTO != null) {
+        if (deliveryMode == ConsumptionMode.PUSH && consumerConnectionDTO != null) {
             try {
                 consumer.setConsumerConnectionSocket(consumerConnectionDTO.ip(), consumerConnectionDTO.port());
             } catch (Exception e) {
@@ -114,7 +163,7 @@ public class QueueService {
         return consumer.getId();
     }
 
-    public ConsumerRecord consumeMessages(String id) {
+    public synchronized ConsumerRecord consumeMessages(String id) {
         System.out.println("Consuming messages for consumer with id: " + id);
         Consumer consumer = consumers.get(id);
         if (consumer == null) {
@@ -125,17 +174,25 @@ public class QueueService {
 
         for (String topic : consumer.getInterestedTopics()) {
             MessageQueue queue = queues.get(topic);
-            List<Message> messages = queue.getMessages(consumer.getTopicOffset(topic));
+            List<Message> messages;
+
+            if (queueType.equals(QueueType.PUB_SUB)) {
+                messages = queue.getMessages(consumer.getTopicOffset(topic));
+            } else {
+                messages = queue.popAllMessages();
+            }
 
             if (messages != null) {
                 records.put(topic, messages);
-                consumer.setTopicOffset(topic, queue.size());
+                if (queueType.equals(QueueType.PUB_SUB))
+                    consumer.setTopicOffset(topic, queue.size());
             }
             filePersistenceManager.saveConsumer(consumer);
         }
 
         return new ConsumerRecord(records);
     }
+
 
     public void loadQueues() {
         System.out.println("Loading queues");

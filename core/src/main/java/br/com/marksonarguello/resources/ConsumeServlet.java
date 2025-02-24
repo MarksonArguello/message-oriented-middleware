@@ -18,7 +18,7 @@ public class ConsumeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String id = request.getParameter("id");
-        System.out.println("Consuming messages from queue with id: " + id);
+        //System.out.println("Consuming messages from queue with id: " + id);
         ConsumerRecord consumerRecord = queueService.consumeMessages(id);
 
         String body = BodyConverter.toJson(consumerRecord);

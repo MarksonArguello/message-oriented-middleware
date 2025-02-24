@@ -8,12 +8,14 @@ import java.net.Socket;
 import java.net.ServerSocket;
 
 public class ConnectionSocket extends Thread {
-    private static int PORT = 10004;
+    private static int PORT = Integer.parseInt(System.getenv("CONSUMER_PORT"));
     private int port;
     private ServerSocket serverSocket;
     private Consumer consumer;
+
     public ConnectionSocket(Consumer consumer) throws IOException {
         this.port = PORT;
+        System.out.println("Port: " + this.port);
         PORT++;
         this.serverSocket = new ServerSocket(this.port);
         this.consumer = consumer;

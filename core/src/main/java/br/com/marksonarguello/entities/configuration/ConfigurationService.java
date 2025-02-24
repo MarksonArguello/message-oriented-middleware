@@ -1,5 +1,8 @@
 package br.com.marksonarguello.entities.configuration;
 
+import br.com.marksonarguello.entities.queue.dto.QueueCreateDTO;
+import br.com.marksonarguello.entities.queue.services.QueueService;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -30,9 +33,17 @@ public class ConfigurationService {
         }
     }
 
+    public static void loadQueues() {
+        QueueService queueService = QueueService.getInstance();
+        queueService.loadQueues();
+
+        queueService.createQueue(new QueueCreateDTO("test-topic"));
+
+    }
+
     private static void setDefaultProperties() {
         // Persistence
-        System.setProperty("persistence.enable", "true");
+        System.setProperty("persistence.enable", "false");
         System.setProperty("persistence.base.folder", "data/");
         System.setProperty("persistence.file.separator", "_");
         System.setProperty("persistence.consumer.folder", "queueConsumers/");
@@ -43,5 +54,11 @@ public class ConfigurationService {
         // Message
         System.setProperty("message.max.size.bytes", "1024");
         System.setProperty("message.log.file", "message.log");
+
+        // Queue
+        String mode = System.getenv("QUEUE_MODE");
+        System.setProperty("queue.delivery.mode", mode != null ? mode : "PUBLISHER_SUBSCRIBER");
+        String type = System.getenv("QUEUE_TYPE");
+        System.setProperty("queue.type", type != null && type.equals("PUSH") ? type : "PULL");
     }
 }
