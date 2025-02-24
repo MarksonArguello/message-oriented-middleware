@@ -1,0 +1,74 @@
+Message sent: Message 1 from producer 1 to topic: newsMessage sent: Message 2 from producer 1 to topic: newsMessage sent: Message 3 from producer 1 to topic: newsMessage sent: Message 4 from producer 1 to topic: newsMessage sent: Message 5 from producer 1 to topic: newsMessage sent: Message 6 from producer 1 to topic: newsMessage sent: Message 7 from producer 1 to topic: newsMessage sent: Message 8 from producer 1 to topic: newsMessage sent: Message 9 from producer 1 to topic: newsMessage sent: Message 10 from producer 1 to topic: newsMessage sent: Message 11 from producer 1 to topic: newsMessage sent: Message 12 from producer 1 to topic: newsMessage sent: Message 13 from producer 1 to topic: newsMessage sent: Message 14 from producer 1 to topic: newsMessage sent: Message 15 from producer 1 to topic: newsMessage sent: Message 16 from producer 1 to topic: newsMessage sent: Message 17 from producer 1 to topic: newsMessage sent: Message 18 from producer 1 to topic: newsMessage sent: Message 19 from producer 1 to topic: newsMessage sent: Message 20 from producer 1 to topic: newsMessage sent: Message 21 from producer 1 to topic: newsMessage sent: Message 22 from producer 1 to topic: newsMessage sent: Message 23 from producer 1 to topic: newsMessage sent: Message 24 from producer 1 to topic: newsMessage sent: Message 25 from producer 1 to topic: newsMessage sent: Message 26 from producer 1 to topic: newsMessage sent: Message 27 from producer 1 to topic: newsMessage sent: Message 28 from producer 1 to topic: newsMessage sent: Message 29 from producer 1 to topic: newsMessage sent: Message 30 from producer 1 to topic: newsMessage sent: Message 31 from producer 1 to topic: newsMessage sent: Message 32 from producer 1 to topic: newsMessage sent: Message 33 from producer 1 to topic: newsMessage sent: Message 34 from producer 1 to topic: newsMessage sent: Message 35 from producer 1 to topic: newsMessage sent: Message 36 from producer 1 to topic: newsMessage sent: Message 37 from producer 1 to topic: newsMessage sent: Message 38 from producer 1 to topic: newsMessage sent: Message 39 from producer 1 to topic: newsMessage sent: Message 40 from producer 1 to topic: newsMessage sent: Message 41 from producer 1 to topic: newsMessage sent: Message 42 from producer 1 to topic: newsMessage sent: Message 43 from producer 1 to topic: newsMessage sent: Message 44 from producer 1 to topic: newsMessage sent: Message 45 from producer 1 to topic: newsMessage sent: Message 46 from producer 1 to topic: newsMessage sent: Message 47 from producer 1 to topic: newsMessage sent: Message 48 from producer 1 to topic: newsMessage sent: Message 49 from producer 1 to topic: newsMessage sent: Message 50 from producer 1 to topic: newsMessage sent: Message 51 from producer 1 to topic: newsMessage sent: Message 52 from producer 1 to topic: newsMessage sent: Message 53 from producer 1 to topic: newsMessage sent: Message 54 from producer 1 to topic: newsMessage sent: Message 55 from producer 1 to topic: newsMessage sent: Message 56 from producer 1 to topic: newsMessage sent: Message 57 from producer 1 to topic: newsMessage sent: Message 58 from producer 1 to topic: newsMessage sent: Message 59 from producer 1 to topic: newsMessage sent: Message 60 from producer 1 to topic: newsMessage sent: Message 61 from producer 1 to topic: newsMessage sent: Message 62 from producer 1 to topic: newsMessage sent: Message 63 from producer 1 to topic: newsMessage sent: Message 64 from producer 1 to topic: newsMessage sent: Message 65 from producer 1 to topic: newsMessage sent: Message 66 from producer 1 to topic: newsMessage sent: Message 67 from producer 1 to topic: newsMessage sent: Message 68 from producer 1 to topic: newsMessage sent: Message 69 from producer 1 to topic: newsMessage sent: Message 70 from producer 1 to topic: newsMessage sent: Message 71 from producer 1 to topic: newsMessage sent: Message 72 from producer 1 to topic: newsMessage sent: Message 73 from producer 1 to topic: newsMessage sent: Message 74 from producer 1 to topic: newsMessage sent: Message 75 from producer 1 to topic: newsMessage sent: Message 76 from producer 1 to topic: newsMessage sent: Message 77 from producer 1 to topic: newsMessage sent: Message 78 from producer 1 to topic: newsMessage sent: Message 79 from producer 1 to topic: newsMessage sent: Message 80 from producer 1 to topic: newsMessage sent: Message 81 from producer 1 to topic: newsMessage sent: Message 82 from producer 1 to topic: newsMessage sent: Message 83 from producer 1 to topic: newsMessage sent: Message 84 from producer 1 to topic: newsMessage sent: Message 85 from producer 1 to topic: newsMessage sent: Message 86 from producer 1 to topic: newsMessage sent: Message 87 from producer 1 to topic: newsMessage sent: Message 88 from producer 1 to topic: newsMessage sent: Message 89 from producer 1 to topic: newsMessage sent: Message 90 from producer 1 to topic: newsMessage sent: Message 91 from producer 1 to topic: newsMessage sent: Message 92 from producer 1 to topic: newsMessage sent: Message 93 from producer 1 to topic: newsMessage sent: Message 94 from producer 1 to topic: newsMessage sent: Message 95 from producer 1 to topic: newsMessage sent: Message 96 from producer 1 to topic: newsMessage sent: Message 97 from producer 1 to topic: newsMessage sent: Message 98 from producer 1 to topic: newsMessage sent: Message 99 from producer 1 to topic: newsMessage sent: Message 100 from producer 1 to topic: newsConsumer 1 received message: 1_Message 1 from producer 1
+Message 1 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 2 from producer 1
+Message 2 from producer 1 to topic: news
+Message 3 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 3 from producer 1
+Message 4 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 4 from producer 1
+Consumer 1 received message: 1_Message 5 from producer 1
+Message 5 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 6 from producer 1
+Message 6 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 7 from producer 1
+Message 7 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 8 from producer 1
+Message 8 from producer 1 to topic: news
+Message 9 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 9 from producer 1
+Message 10 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 10 from producer 1
+Consumer 1 received message: 1_Message 11 from producer 1
+Message 11 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 12 from producer 1
+Message 12 from producer 1 to topic: news
+Message 13 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 13 from producer 1
+Consumer 1 received message: 1_Message 14 from producer 1
+Message 14 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 15 from producer 1
+Message 15 from producer 1 to topic: news
+Message 16 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 16 from producer 1
+Consumer 1 received message: 1_Message 17 from producer 1
+Message 17 from producer 1 to topic: news
+Message 1 from producer 1 to topic: news
+Message 2 from producer 1 to topic: news
+Message 3 from producer 1 to topic: news
+Message 4 from producer 1 to topic: news
+Message 5 from producer 1 to topic: news
+Message 6 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 1 from producer 1
+Consumer 1 received message: 1_Message 2 from producer 1
+Consumer 1 received message: 1_Message 3 from producer 1
+Consumer 1 received message: 1_Message 4 from producer 1
+Consumer 1 received message: 1_Message 5 from producer 1
+Consumer 1 received message: 1_Message 6 from producer 1
+Consumer 1 received message: 1_Message 1 from producer 1
+Message 1 from producer 1 to topic: news
+Message 2 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 2 from producer 1
+Message 3 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 3 from producer 1
+Message 4 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 4 from producer 1
+Message 5 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 5 from producer 1
+Message 6 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 6 from producer 1
+Message 7 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 7 from producer 1
+Message 8 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 8 from producer 1
+Message 9 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 9 from producer 1
+Message 10 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 10 from producer 1
+Message 11 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 11 from producer 1
+Message 12 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 12 from producer 1
+Message 13 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 13 from producer 1
+Message 14 from producer 1 to topic: news
+Consumer 1 received message: 1_Message 14 from producer 1
